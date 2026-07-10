@@ -1,6 +1,6 @@
 # PDF/DOCX File Storage Service
 
-A Laravel 11 + PHP 8.2 web application for uploading, listing, downloading, and auto-expiring PDF and DOCX files. Files are automatically purged 24 hours after upload. All deletions — manual and automatic — publish a JSON event to RabbitMQ for downstream email notification.
+A Laravel 13 + PHP 8.4 web application for uploading, listing, downloading, and auto-expiring PDF and DOCX files. Files are automatically purged 24 hours after upload. All deletions — manual and automatic — publish a JSON event to RabbitMQ for downstream email notification.
 
 ---
 
@@ -236,7 +236,7 @@ The `files:delete-expired` command is the same command the built-in scheduler ca
 | Component | Technology | Notes |
 |---|---|---|
 | Web server | nginx 1.x | Reverse proxy — forwards PHP requests to php-fpm on `127.0.0.1:9000` |
-| PHP runtime | php-fpm 8.2 | Runs the Laravel application |
+| PHP runtime | php-fpm 8.4 | Runs the Laravel application |
 | Process manager | Supervisor | Manages nginx, php-fpm, and the scheduler loop in a single container |
 | Scheduler | `schedule:run` loop | Fires every 60 seconds; deletes files whose `expiration_timestamp ≤ NOW()` |
 | Database | MySQL 8.0 | Data persisted in the `db_data` named volume |

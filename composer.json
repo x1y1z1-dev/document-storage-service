@@ -2,10 +2,13 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "PDF/DOCX file storage service — upload, list, download, and auto-expire files with RabbitMQ deletion events.",
     "keywords": [
         "laravel",
-        "framework"
+        "file-storage",
+        "rabbitmq",
+        "pdf",
+        "docx"
     ],
     "license": "MIT",
     "require": {
