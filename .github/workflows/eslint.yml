@@ -1,0 +1,38 @@
+name: ESLint
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "resources/js/**"
+      - "eslint.config.js"
+      - "package.json"
+      - "package-lock.json"
+  pull_request:
+    branches: ["**"]
+    paths:
+      - "resources/js/**"
+      - "eslint.config.js"
+      - "package.json"
+      - "package-lock.json"
+
+jobs:
+  lint:
+    name: ESLint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint

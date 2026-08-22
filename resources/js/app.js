@@ -2,14 +2,13 @@ import 'bootstrap';
 import $ from 'jquery';
 
 $(function () {
-console.log(1234);
     // -----------------------------------------------------------------------
     // Global AJAX setup — attach CSRF token to every request (Req 11.9)
     // -----------------------------------------------------------------------
     $.ajaxSetup({
         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
     });
 
     // -----------------------------------------------------------------------
@@ -17,7 +16,7 @@ console.log(1234);
     // -----------------------------------------------------------------------
     function showAlert(message, type) {
         // type is a Bootstrap colour: 'success' | 'danger' | 'warning' | 'info'
-        var html =
+        const html =
             '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">' +
                 '<span>' + $('<div>').text(message).html() + '</span>' +
                 '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
@@ -30,7 +29,7 @@ console.log(1234);
     // (mirrors the Blade template row structure for consistency)
     // -----------------------------------------------------------------------
     function buildRow(record) {
-        var fileType = '';
+        let fileType = '';
         if (record.mime_type === 'application/pdf') {
             fileType = 'PDF';
         } else if (record.mime_type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
@@ -39,13 +38,13 @@ console.log(1234);
             fileType = record.mime_type.toUpperCase();
         }
 
-        var formattedSize = formatFileSize(record.file_size_bytes);
+        const formattedSize = formatFileSize(record.file_size_bytes);
 
         // Convert ISO 8601 timestamps to "YYYY-MM-DD HH:MM:SS UTC"
-        var uploadedAt = isoToUtcDisplay(record.upload_timestamp);
-        var expiresAt  = isoToUtcDisplay(record.expiration_timestamp);
+        const uploadedAt = isoToUtcDisplay(record.upload_timestamp);
+        const expiresAt = isoToUtcDisplay(record.expiration_timestamp);
 
-        var downloadUrl = '/files/' + record.id + '/download';
+        const downloadUrl = '/files/' + record.id + '/download';
 
         return (
             '<tr data-id="' + record.id + '">' +
@@ -84,15 +83,15 @@ console.log(1234);
     // -----------------------------------------------------------------------
     function isoToUtcDisplay(iso) {
         try {
-            var d = new Date(iso);
-            var pad = function (n) { return String(n).padStart(2, '0'); };
+            const d = new Date(iso);
+            const pad = function (n) { return String(n).padStart(2, '0'); };
             return d.getUTCFullYear() + '-' +
                    pad(d.getUTCMonth() + 1) + '-' +
                    pad(d.getUTCDate()) + ' ' +
                    pad(d.getUTCHours()) + ':' +
                    pad(d.getUTCMinutes()) + ':' +
                    pad(d.getUTCSeconds()) + ' UTC';
-        } catch (e) {
+        } catch {
             return iso;
         }
     }
@@ -101,12 +100,12 @@ console.log(1234);
     // jQuery async file upload (Requirements: 1.1, 1.2, 1.7)
     // -----------------------------------------------------------------------
     $('#fileInput').on('change', function () {
-        var file = this.files[0];
+        const file = this.files[0];
         if (!file) {
             return;
         }
 
-        var formData = new FormData();
+        const formData = new FormData();
         formData.append('file', file);
 
         // Reset the input so the same file can be re-selected if needed
@@ -116,8 +115,8 @@ console.log(1234);
             url: '/files',
             method: 'POST',
             data: formData,
-            processData: false,   // prevent jQuery from serialising FormData
-            contentType: false,   // let the browser set the multipart boundary
+            processData: false, // prevent jQuery from serialising FormData
+            contentType: false, // let the browser set the multipart boundary
             success: function (data, status, xhr) {
                 if (xhr.status === 201) {
                     // Remove empty-state row if present
@@ -130,14 +129,14 @@ console.log(1234);
                 }
             },
             error: function (xhr) {
-                var msg = 'An unexpected error occurred. Please try again.';
+                let msg = 'An unexpected error occurred. Please try again.';
 
                 if (xhr.status === 422) {
                     try {
-                        var body = xhr.responseJSON;
+                        const body = xhr.responseJSON;
                         if (body && body.error) {
                             if (body.error.details) {
-                                var details = [];
+                                const details = [];
                                 $.each(body.error.details, function (field, messages) {
                                     $.each(messages, function (i, m) {
                                         details.push(m);
@@ -148,7 +147,7 @@ console.log(1234);
                                 msg = body.error.message;
                             }
                         }
-                    } catch (e) {
+                    } catch {
                         msg = 'Validation failed. Please check the file and try again.';
                     }
                     showAlert(msg, 'danger');
@@ -159,7 +158,7 @@ console.log(1234);
                 } else {
                     showAlert('A server error occurred while uploading the file. Please try again later.', 'danger');
                 }
-            }
+            },
         });
     });
 
@@ -168,9 +167,9 @@ console.log(1234);
     // Event delegation so dynamically added rows also get the handler.
     // -----------------------------------------------------------------------
     $('#filesTableBody').on('click', '.btn-delete', function () {
-        var $button = $(this);
-        var fileId  = $button.data('id');
-        var $row    = $button.closest('tr');
+        const $button = $(this);
+        const fileId = $button.data('id');
+        const $row = $button.closest('tr');
 
         // Disable button to prevent double-click during request
         $button.prop('disabled', true);
@@ -190,7 +189,7 @@ console.log(1234);
                                     '<td colspan="6" class="text-center text-muted py-4">' +
                                         'No files have been uploaded yet.' +
                                     '</td>' +
-                                '</tr>'
+                                '</tr>',
                             );
                         }
                     });
@@ -199,17 +198,17 @@ console.log(1234);
             error: function (xhr) {
                 $button.prop('disabled', false);
 
-                var msg = 'Failed to delete the file. Please try again.';
+                let msg = 'Failed to delete the file. Please try again.';
 
                 try {
-                    var body = xhr.responseJSON;
+                    const body = xhr.responseJSON;
                     if (body && body.error && body.error.message) {
                         msg = body.error.message;
                     }
-                } catch (e) { /* use default msg */ }
+                } catch { /* use default msg */ }
 
                 showAlert(msg, 'danger');
-            }
+            },
         });
     });
 
