@@ -2,6 +2,11 @@
 
 declare(strict_types=1);
 
+use Tests\TestCase;
+
+// Unit tests that call config() need a booted Laravel app container.
+uses(TestCase::class);
+
 // ---------------------------------------------------------------------------
 // config/filestorage.php (Requirement 8.1)
 // ---------------------------------------------------------------------------
